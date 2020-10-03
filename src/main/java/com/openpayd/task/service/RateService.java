@@ -3,16 +3,16 @@ package com.openpayd.task.service;
 import com.openpayd.task.configuration.ApplicationContextHolder;
 import com.openpayd.task.dto.ApiData;
 import com.openpayd.task.dto.Rate;
-import com.openpayd.task.excption.OpedPayDAccessException;
-import com.openpayd.task.excption.OpenPayDException;
-import com.openpayd.task.excption.OpenPaydClientErrorException;
+import com.openpayd.task.excption.ConversionNoRateException;
+import com.openpayd.task.excption.RateApiAccessException;
+import com.openpayd.task.excption.RateApiException;
+import com.openpayd.task.excption.RatiApiClientErrorException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +20,10 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RateService {
@@ -40,13 +43,13 @@ public class RateService {
             String response = restTemplate.getForObject(url, String.class);
             apiData = generateApiDataFromResponse(response);
         }catch (ResourceAccessException conn){
-            throw new OpedPayDAccessException("Can not connect to API.");
+            throw new RateApiAccessException("Can not connect to API.");
         }catch (HttpClientErrorException clientErrEx){
-            throw new OpenPaydClientErrorException(clientErrEx.getMessage());
+            throw new RatiApiClientErrorException(clientErrEx.getMessage());
         }catch (JSONException in){
-            throw new OpenPaydClientErrorException("Invalid JSON");
+            throw new RatiApiClientErrorException("Invalid JSON");
         }catch (Exception ex){
-            throw new OpenPayDException(ex);
+            throw new RateApiException(ex);
         }
 
         List<Rate> rates = apiData.getRates();
@@ -55,7 +58,7 @@ public class RateService {
         if(!sourceCurrency.equals("EUR")){
             Optional<Rate> optSourceCurrency = filterCurrencyRate(sourceCurrency, rates);
             if(!optSourceCurrency.isPresent()){
-                throw new OpenPayDException("There is no currency for " + sourceCurrency);
+                throw new ConversionNoRateException("There is no currency for " + sourceCurrency);
             }
             Rate sourceRate = optSourceCurrency.get();
             sourceRateValue = sourceRate.getValue();
@@ -65,7 +68,7 @@ public class RateService {
         if(!targetCurrency.equals("EUR")){
             Optional<Rate> optTargetCurrency = filterCurrencyRate(targetCurrency, rates);
             if(!optTargetCurrency.isPresent()){
-                throw new OpenPayDException("There is no currency for " + sourceCurrency);
+                throw new ConversionNoRateException("There is no currency for " + sourceCurrency);
             }
             Rate targetRate = optTargetCurrency.get();
             targetRateValue = targetRate.getValue();

@@ -1,6 +1,5 @@
 package com.openpayd.task.controller;
 
-import com.openpayd.task.dto.ApiData;
 import com.openpayd.task.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rate")

@@ -1,9 +1,9 @@
 package com.openpayd.task.excption.handler;
 
-import com.openpayd.task.excption.OpedPayDAccessException;
-import com.openpayd.task.excption.OpenPayDException;
-import com.openpayd.task.excption.OpenPayDInvalidJsonException;
-import com.openpayd.task.excption.OpenPaydClientErrorException;
+import com.openpayd.task.excption.RateApiAccessException;
+import com.openpayd.task.excption.RateApiException;
+import com.openpayd.task.excption.RateApiInvalidJsonException;
+import com.openpayd.task.excption.RatiApiClientErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,16 +28,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler(OpenPayDException.class)
-    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(OpenPayDException ex, WebRequest request){
+    @ExceptionHandler(RateApiException.class)
+    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(RateApiException ex, WebRequest request){
         ex.printStackTrace();
         String message = ex != null && ex.getMessage() != null ? ex.getMessage() : genericMessageText;
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), message, request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler(OpedPayDAccessException.class)
-    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(OpedPayDAccessException ex, WebRequest request){
+    @ExceptionHandler(RateApiAccessException.class)
+    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(RateApiAccessException ex, WebRequest request){
         ex.printStackTrace();
         Throwable exception = ex.getException();
         if(exception != null){
@@ -47,15 +47,15 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler(OpenPaydClientErrorException.class)
-    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(OpenPaydClientErrorException ex, WebRequest request){
+    @ExceptionHandler(RatiApiClientErrorException.class)
+    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(RatiApiClientErrorException ex, WebRequest request){
         ex.printStackTrace();
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler(OpenPayDInvalidJsonException.class)
-    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(OpenPayDInvalidJsonException ex, WebRequest request){
+    @ExceptionHandler(RateApiInvalidJsonException.class)
+    public final ResponseEntity<ExceptionResponse> handleGenericExcepiton(RateApiInvalidJsonException ex, WebRequest request){
         ex.printStackTrace();
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.OK);

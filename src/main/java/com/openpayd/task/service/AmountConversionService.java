@@ -2,10 +2,7 @@ package com.openpayd.task.service;
 
 
 import com.openpayd.task.dao.AmountConversionDao;
-import com.openpayd.task.dto.ApiData;
 import com.openpayd.task.dto.ConversionResponseDto;
-import com.openpayd.task.dto.Rate;
-import com.openpayd.task.excption.ConversionNoRateException;
 import com.openpayd.task.model.AmountConversion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +13,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(rollbackFor = Exception.class)

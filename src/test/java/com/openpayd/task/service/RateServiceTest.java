@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootTest
 public class RateServiceTest {
