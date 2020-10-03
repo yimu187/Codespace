@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,18 +31,8 @@ public class AmountConversionService {
     AmountConversionDao amountConversionDao;
 
     public ConversionResponseDto getConversionResponseDto(BigDecimal sourceAmount, String sourceCurrency, String targetCurrency) {
-        List<String> symbols = Arrays.asList(targetCurrency);
-
-        ApiData apiDataResult = rateService.getApiDataResult(sourceCurrency, symbols);
-        List<Rate> rates = apiDataResult.getRates();
-        Optional<Rate> optTargetCurrency = rates.stream().filter(rate -> rate.getCurrency().equals(targetCurrency)).findFirst();
-        if(optTargetCurrency.isPresent()){
-            throw new ConversionNoRateException(sourceCurrency + " " + targetCurrency + " rate data could not get from Rate API");
-        }
-
-        Rate rate = optTargetCurrency.get();
-        BigDecimal rateValue = rate.getValue();
-
+        BigDecimal rateValue = rateService.getApiDataResult(sourceCurrency, targetCurrency);
+        BigDecimal targetAmount = sourceAmount.multiply(rateValue).setScale(6, RoundingMode.HALF_UP);
         LocalDateTime transactionDate = LocalDateTime.now();
 
         ConversionResponseDto conversionResponseDto = new ConversionResponseDto();
@@ -49,7 +40,7 @@ public class AmountConversionService {
         conversionResponseDto.setSourceCurrency(sourceCurrency);
         conversionResponseDto.setSourceAmount(sourceAmount);
         conversionResponseDto.setTargetCurrency(targetCurrency);
-        conversionResponseDto.setTargetAmount(rateValue);
+        conversionResponseDto.setTargetAmount(targetAmount);
 
         saveAmountConversion(conversionResponseDto);
 

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -18,17 +19,17 @@ public class RateController {
     @Autowired
     RateService rateService;
 
-    @RequestMapping(value = "/apiData", method = RequestMethod.GET)
-    public ModelMap doGetApiData(
-            @RequestParam(required = false) String base,
-            @RequestParam(required = false) List<String> symbols
+    @RequestMapping(value = "/data", method = RequestMethod.GET)
+    public ModelMap doGetRateData(
+            @RequestParam String sourceCurrency,
+            @RequestParam String targetCurrency
     ){
         ModelMap result = new ModelMap();
 
-        ApiData apiDataResult = rateService.getApiDataResult(base, symbols);
+        BigDecimal apiDataResult = rateService.getApiDataResult(sourceCurrency, targetCurrency);
 
         result.addAttribute("message", "Operation Succedded");
-        result.addAttribute("data", apiDataResult);
+        result.addAttribute("result", apiDataResult);
         result.addAttribute("success", true);
 
         return result;

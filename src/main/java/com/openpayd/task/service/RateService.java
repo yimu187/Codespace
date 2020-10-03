@@ -20,48 +20,20 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RateService {
 
-    public ApiData getApiDataResult(){
-        return getApiDataResult(null, new ArrayList<>());
-    }
-
-    public ApiData getApiDataResult(String base){
-        return getApiDataResult(base, new ArrayList<>());
-    }
-
-    public ApiData getApiDataResult(List<String> symbols){
-        return getApiDataResult(null, symbols);
-    }
-
-    public ApiData getApiDataResult(String base, List<String> symbols){
+    public BigDecimal getApiDataResult(String sourceCurrency, String targetCurrency){
         Environment environment = ApplicationContextHolder.getApplicationContext().getBean(Environment.class);
         String url = environment.getProperty("com.openpayd.task.api.url");
-
-        if(StringUtils.hasText(base) || (symbols != null && !symbols.isEmpty())){
-            url += "?";
-            if(StringUtils.hasText(base)){
-                url += "base=" + base;
-                if(StringUtils.hasText(base) && symbols != null && !symbols.isEmpty()){
-                    url += "&";
-                }
-            }
-            if(symbols != null && !symbols.isEmpty()){
-                String syms = String.join(",", symbols);
-                url += "symbols=" + syms;
-            }
-        }
+        String accessKey = environment.getProperty("com.openpayd.task.api.accessKey");
+        url = url + "?access_key=" + accessKey;
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         ApiData apiData;
         try{
@@ -77,7 +49,35 @@ public class RateService {
             throw new OpenPayDException(ex);
         }
 
-        return apiData;
+        List<Rate> rates = apiData.getRates();
+
+        BigDecimal sourceRateValue = BigDecimal.ONE;
+        if(!sourceCurrency.equals("EUR")){
+            Optional<Rate> optSourceCurrency = filterCurrencyRate(sourceCurrency, rates);
+            if(!optSourceCurrency.isPresent()){
+                throw new OpenPayDException("There is no currency for " + sourceCurrency);
+            }
+            Rate sourceRate = optSourceCurrency.get();
+            sourceRateValue = sourceRate.getValue();
+        }
+
+        BigDecimal targetRateValue = BigDecimal.ONE;
+        if(!targetCurrency.equals("EUR")){
+            Optional<Rate> optTargetCurrency = filterCurrencyRate(targetCurrency, rates);
+            if(!optTargetCurrency.isPresent()){
+                throw new OpenPayDException("There is no currency for " + sourceCurrency);
+            }
+            Rate targetRate = optTargetCurrency.get();
+            targetRateValue = targetRate.getValue();
+        }
+
+        BigDecimal result = targetRateValue.divide(sourceRateValue, 6, RoundingMode.HALF_UP);
+
+        return result;
+    }
+
+    private Optional<Rate> filterCurrencyRate(String sourceCurrency, List<Rate> rates) {
+        return rates.stream().filter(rate -> rate.getCurrency().equals(sourceCurrency)).findFirst();
     }
 
     public ApiData generateApiDataFromResponse(String response) {

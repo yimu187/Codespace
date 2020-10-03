@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -21,28 +22,26 @@ public class RateServiceTest {
     RateService rateService;
 
     @Test
-    public void apiDataTest() {
-        ApiData apiDataResult = rateService.getApiDataResult();
+    public void apiDataUSDTRYTest() {
+        BigDecimal apiDataResult = rateService.getApiDataResult("USD", "TRY");
         Assert.notNull(apiDataResult, "Result Empty");
     }
 
     @Test
-    public void apiDataSymbolsTest() {
-        List<String> symbols = Arrays.asList("USD", "TRY");
-        ApiData apiDataResult = rateService.getApiDataResult(symbols);
+    public void apiDataEURTRYTest() {
+        BigDecimal apiDataResult = rateService.getApiDataResult("EUR", "TRY");
         Assert.notNull(apiDataResult, "Result Empty");
     }
 
     @Test
-    public void apiDataBaseTest() {
-        ApiData apiDataResult = rateService.getApiDataResult("EUR");
+    public void apiDataUSDEURTest() {
+        BigDecimal apiDataResult = rateService.getApiDataResult("USD", "EUR");
         Assert.notNull(apiDataResult, "Result Empty");
     }
 
     @Test
-    public void apiDataBaseAndSymbolsTest() {
-        List<String> symbols = Arrays.asList("USD", "TRY");
-        ApiData apiDataResult = rateService.getApiDataResult("EUR", symbols);
+    public void apiDataTRYUSDTest() {
+        BigDecimal apiDataResult = rateService.getApiDataResult("TRY", "USD");
         Assert.notNull(apiDataResult, "Result Empty");
     }
 
