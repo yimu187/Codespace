@@ -28,7 +28,7 @@ public class AmountConversionController {
 
         ConversionResponseDto responseDto = conversionService.getConversionResponseDto(sourceAmount, sourceCurrency, targetCurrency);
 
-        result.addAttribute("message", "Operation Succedded");
+        result.addAttribute("message", "Operation Succeeded");
         result.addAttribute("data", responseDto);
         result.addAttribute("success", true);
 

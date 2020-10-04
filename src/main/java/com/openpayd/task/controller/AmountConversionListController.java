@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/converted")
-public class ConversionListController {
+public class AmountConversionListController {
 
     @Autowired
     AmountConversionService amountConversionService;
@@ -31,7 +31,7 @@ public class ConversionListController {
 
         List<ConversionResponseDto> responseDtos = amountConversionService.findAllAmountCoversionByParams(transactionId, transactionDate, pageLength, pageNumber);
 
-        result.addAttribute("message", "Operation Succedded");
+        result.addAttribute("message", "Operation Succeeded");
         result.addAttribute("data", responseDtos);
         result.addAttribute("success", true);
 

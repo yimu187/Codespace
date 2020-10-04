@@ -26,7 +26,7 @@ public class RateController {
 
         BigDecimal apiDataResult = rateService.getApiDataResult(sourceCurrency, targetCurrency);
 
-        result.addAttribute("message", "Operation Succedded");
+        result.addAttribute("message", "Operation Succeeded");
         result.addAttribute("result", apiDataResult);
         result.addAttribute("success", true);
 
