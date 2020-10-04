@@ -7,6 +7,7 @@ import com.openpayd.task.excption.ConversionNoRateException;
 import com.openpayd.task.excption.RateApiAccessException;
 import com.openpayd.task.excption.RateApiException;
 import com.openpayd.task.excption.RatiApiClientErrorException;
+import com.openpayd.task.util.EncodeUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
@@ -32,7 +33,8 @@ public class RateService {
         Environment environment = ApplicationContextHolder.getApplicationContext().getBean(Environment.class);
         String url = environment.getProperty("com.openpayd.task.api.url");
         String accessKey = environment.getProperty("com.openpayd.task.api.accessKey");
-        url = url + "?access_key=" + accessKey;
+        String originalAccessKey = EncodeUtil.decode(accessKey);
+        url = url + "?access_key=" + originalAccessKey;
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
