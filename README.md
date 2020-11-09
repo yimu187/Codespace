@@ -14,5 +14,7 @@ http://localhost:8080/converted
 
 Run the application with the command below
 
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+
 mvn spring-boot:run
 
