@@ -7,6 +7,10 @@ public class EncodeUtilTest {
 
     @Test
     public void encodeDecodeTest(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("a").append("a");
+        boolean res = null instanceof String;
+
         String originalText = "origText";
         String encodedText = EncodeUtil.encode(originalText);
 
